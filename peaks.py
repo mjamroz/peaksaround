@@ -37,7 +37,7 @@ def haversine(lon1, lat1, lon2, lat2):
     phi_2 = math.radians(lat2)
     a = math.sin(math.radians(lat2 - lat1) / 2.0) ** 2 + math.cos(phi_1) * \
         math.cos(phi_2) * math.sin(math.radians(lon2 - lon1)/2.0) ** 2
-    c = 6371000 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    c = 6378137 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     return round(c, 3)
 

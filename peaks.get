@@ -1,0 +1,4 @@
+#wget https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3B%0A%28%0A%20%20node%5B%22natural%22%3D%22peak%22%5D%2839.35129035526705%2C-3.6254882812499996%2C50.45750402042058%2C15.6884765625%29%3B%0A%29%3B%0Aout%20body%3B%0A%3E%3B -O peaks.jsonn
+# whole world
+# wget https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3B%0A%28%0A%20%20node%5B%22natural%22%3D%22peak%22%5D%28-89.2963362321379%2C-180%2C87.18468168462616%2C180%29%3B%0A%29%3B%0Aout%20body%3B%0A%3E%3B -O peaks_all.json
+wget https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%3B%0A%28%0A%20%20node%5B%22natural%22%3D%22peak%22%5D%2835.496456056584165%2C-10.107421874999998%2C56.897003921272606%2C28.5205078125%29%3B%0A%29%3B%0Aout%20body%3B%0A%3E%3B -O peaks_europe.json
