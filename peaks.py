@@ -85,7 +85,7 @@ class PeaksAround:
         return c #round(c, 3)
 
 
-    def visible_from_me(self, limit=1000, my_alt=400):
+    def visible_from_me(self, my_alt=400):
 
         # https://stackoverflow.com/a/7472230
 
@@ -93,8 +93,8 @@ class PeaksAround:
         global cursor
         fud = math.pow(math.cos(math.radians(self.lat)), 2)
         self.c.execute("SELECT lat,lon,name,alt,viewrange FROM summits ORDER BY ((? - lat) * \
-                    (? - lat) + (? - lon) * (? - lon) * ?) LIMIT ?",
-                    [self.lat, self.lat, self.lon, self.lon, fud, limit])
+                    (? - lat) + (? - lon) * (? - lon) * ?)",
+                    [self.lat, self.lat, self.lon, self.lon, fud])
         filtered = []
         for e in self.c.fetchall():
             lat_ = e[0]
@@ -102,8 +102,8 @@ class PeaksAround:
 
             distance = self.haversine(lon_, lat_, self.lon, self.lat)
             # if distance to the mountain is less than visible range from the mountain - then we will see it.(?)
-            if distance <= e[4] + self.view_range(my_alt):
-                filtered.append((i, e[2], e[3], e[0], e[1], self.haversine(lon_, lat_, self.lon, self.lat), e[4]))
+            if e[4] + self.view_range(my_alt) >= distance:
+                filtered.append((i, e[2], e[3], e[0], e[1], distance, e[4]))
                 # 3 = lat
                 # 4 = lon
                 i+=1
