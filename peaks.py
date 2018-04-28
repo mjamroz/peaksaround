@@ -4,10 +4,12 @@ import sqlite3
 import math
 import csv
 import json
+import numpy as np
 
 class PeaksAround:
-    def __init__(self, lat, lon):
+    def __init__(self, lat, lon, my_alt=250):
             self.lat, self.lon = lat, lon
+            self.my_alt = my_alt
             self.conn = sqlite3.connect("summits.db")
             self.conn.text_factory = str
             self.c = self.conn.cursor()
@@ -55,7 +57,6 @@ class PeaksAround:
             print "Imported ", len(data), " summits"
         self.conn.commit()
 
-
     def populate_database(self, filename='summitslist.csv'):
         # for data from http://www.sotadata.org.uk/summits.aspx
         self.c.execute("CREATE TABLE IF NOT EXISTS summits (id integer primary key, \
@@ -78,14 +79,13 @@ class PeaksAround:
         # https://community.esri.com/groups/coordinate-reference-systems/blog/2017/10/05/haversine-formula
         phi_1 = math.radians(lat1)
         phi_2 = math.radians(lat2)
-        a = math.sin(math.radians(lat2 - lat1) / 2.0) ** 2 + math.cos(phi_1) * \
+        a = math.sin(math.radians(lat2 - lat1) / 2.0) ** 2 + math.cos(phi_1) *\
             math.cos(phi_2) * math.sin(math.radians(lon2 - lon1)/2.0) ** 2
         c = 6378137 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-        return c #round(c, 3)
+        return c
 
-
-    def visible_from_me(self, my_alt=400):
+    def visible_from_me(self):
 
         # https://stackoverflow.com/a/7472230
 
@@ -101,13 +101,60 @@ class PeaksAround:
             lon_ = e[1]
 
             distance = self.haversine(lon_, lat_, self.lon, self.lat)
-            # if distance to the mountain is less than visible range from the mountain - then we will see it.(?)
-            if e[4] + self.view_range(my_alt) >= distance:
+            # if distance to the mountain is less than visible range from the mountain
+            # - then we will see it.(?)
+            if e[4] + self.view_range(self.my_alt) >= distance:
                 filtered.append((i, e[2], e[3], e[0], e[1], distance, e[4]))
                 # 3 = lat
                 # 4 = lon
-                i+=1
+                i += 1
         return filtered
+
+    def _pick_only_closest(self, peaks):
+
+        if len(peaks) < 2:
+            return peaks
+        peaks.sort(key=lambda tup: tup[3])
+
+        # first peak always visible
+        cleaned = [peaks[0]]
+        peaks.remove(peaks[0])
+
+        changed = True
+        while changed:
+            l0 = len(peaks)
+            p_to_remove = []
+            for p in peaks:
+                last_peak = cleaned[-1]
+                last_peak_alt = last_peak[1]
+                last_peak_d = last_peak[3]
+
+                curr_peak_alt = p[1]
+                curr_peak_d = p[3]
+
+                # since a1/d1 = a2/d2 => a2 : a1d2/d1 <= curr_peak_alt. a2d2/d1 horizon
+                if (last_peak_alt-self.my_alt)*curr_peak_d/last_peak_d <= (curr_peak_alt-self.my_alt):
+                    cleaned.append(p)
+                p_to_remove.append(p)
+            for p in p_to_remove:
+                peaks.remove(p)
+            if len(peaks) == l0:
+                changed = False
+        return cleaned
+
+    def hide_peaks_behind(self, peaks, bin_size=0.2):
+        picked = []
+        peaks.sort(key=lambda tup: tup[0])
+        # make grid of bin_size edges
+        c0 = -np.pi
+        for c in np.arange(-np.pi+bin_size, np.pi+bin_size, bin_size):
+            grid = []
+            for e in peaks:
+                if e[0] < c and e[0] >= c0:
+                    grid.append(e)
+            picked += self._pick_only_closest(grid)
+            c0 = c
+        return picked
 
 if __name__ == "__main__":
 #populate_database_from_osm()
