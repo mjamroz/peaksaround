@@ -14,7 +14,6 @@ lat, lon = 45.2087542, 5.8590479 # vieux
 #lat, lon = 45.234440, 5.710000 # neron
 
 gdal.UseExceptions()
-
 ds = gdal.Open('srtm_38_03.tif')
 band = ds.GetRasterBand(1)
 elevation = band.ReadAsArray()
@@ -92,16 +91,16 @@ ax = fig.add_subplot(111, projection='3d')
 
 
 #ax.set_xlim([-np.pi, np.pi])
-Peaks = PeaksAround(lat, lon, 1)
-peaks = format_for_plot(Peaks)
-atans, alts, names = [], [], []
-for e in peaks:
-    atans.append(e[0])
-    alts.append(e[1])
-    names.append(e[2])
+#Peaks = PeaksAround(lat, lon, 1)
+#peaks = format_for_plot(Peaks)
+#atans, alts, names = [], [], []
+#for e in peaks:
+#    atans.append(e[0])
+#    alts.append(e[1])
+#    names.append(e[2])
 
-#ax.scatter(atans_ele, elevations, alpha=0.5)
-ax.scatter(rows, cols, elevations, alpha=0.5)
+ax.scatter(atans_ele, elevations, alpha=0.5)
+#ax.scatter(rows, cols, alpha=0.1)
 #ax.scatter(atans, alts)
 #for i in range(len(atans)):
     #ax.text(atans[i], alts[i], repr(names[i]), fontsize=6, rotation=-45)
