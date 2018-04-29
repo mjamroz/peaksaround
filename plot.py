@@ -7,7 +7,8 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+#gubalo
+#lat, lon = 49.3058851,19.9259982
 # saint bruno
 lat, lon = 45.187739, 5.714140
 # lat, lon = 45.6736,6.3803 # albertville
@@ -18,9 +19,9 @@ my_alt = 250
 #lat, lon = 44.9030791, 6.3736697
 
 Peaks = PeaksAround(lat, lon, my_alt)
-atans, names, alts, lons, lats, distances = [], [], [], [], [], []
 
 def format_for_plot(Peaks):
+    atans, names, alts, lons, lats, distances = [], [], [], [], [], []
     for e in Peaks.visible_from_me():
         lat_ = e[3] - lat
         lon_ = e[4] - lon
@@ -52,13 +53,14 @@ def plot_peaks(peaks, cut=3000):
     plt.show()
 
 
+if __name__ == "__main__":
 # fine test:
-peaks_faked = [
-         (1, 1000.0, '<-- alt, dist -->', 1000),
-         (1, 500.0, '<-- alt, dist -->', 2000),
-         (1, 2500.0, '<-- alt, dist -->', 3000),
-         (1, 3000.0, '<-- alt, dist -->', 4000),
-         (1, 2900.0, '<-- alt, dist -->', 5000),
-         (1, 7000.0, '<-- alt, dist -->', 6000),
-         ]
-plot_peaks(format_for_plot(Peaks))
+    peaks_faked = [
+            (1, 1000.0, '<-- alt, dist -->', 1000),
+            (1, 500.0, '<-- alt, dist -->', 2000),
+            (1, 2500.0, '<-- alt, dist -->', 3000),
+            (1, 3000.0, '<-- alt, dist -->', 4000),
+            (1, 2900.0, '<-- alt, dist -->', 5000),
+            (1, 7000.0, '<-- alt, dist -->', 6000),
+            ]
+    plot_peaks(format_for_plot(Peaks))
